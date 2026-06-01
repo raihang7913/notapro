@@ -1,11 +1,13 @@
 # 🏗️ Implementation Plan: Project Setup & Foundation (Milestone 1)
 
-This implementation plan outlines the setup of **NotarisPro**, a comprehensive web application for Notary & PPAT office management in Indonesia. We will initiate the first phase (Milestone 1: MVP Foundation) by bootstrapping the codebase, configuring the database, and setting up the project structure.
+This implementation plan outlines the setup of **NotarisPro**, a comprehensive web application for Notary & PPAT office management in Indonesia. We will initiate the first phase (Milestone 1: MVP Foundation) by bootstrapping the codebase, configuring a direct **PostgreSQL database connection**, and setting up the project structure.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> Please review the chosen tech stack and open questions below before we begin code execution. Specifically, we need to align on your preferred styling framework.
+> Based on your feedback, we are using a **standard PostgreSQL database** instead of Supabase. This means all database operations, migrations, and user sessions will run directly on your own PostgreSQL instance via Prisma.
+> 
+> For authentication, we will use **NextAuth.js (Auth.js)** with the Prisma Adapter, storing all user credentials, sessions, and roles directly in your PostgreSQL database.
 
 ## Open Questions
 
@@ -13,7 +15,12 @@ This implementation plan outlines the setup of **NotarisPro**, a comprehensive w
 > 1. **Styling Framework Selection:** The previous planning phase (`plan.md`) proposed using **Tailwind CSS + shadcn/ui**. Under our standard guidelines, we default to **Vanilla CSS** unless you explicitly request Tailwind CSS. 
 >    * Would you like us to proceed with **Tailwind CSS v4** (recommended for modern Next.js projects) along with shadcn/ui? Or do you prefer **Vanilla CSS**?
 > 2. **Next.js & React Version:** Do you prefer using **Next.js 15 (React 19)** (latest stable) or **Next.js 14 (React 18)**? Next.js 15 has the latest optimizations and React Compiler support.
-> 3. **Supabase Environment:** Do you have an existing Supabase project URL and API key that we should use, or should we configure the application with local/placeholder environment variables first?
+> 3. **File Storage:** Since we are not using Supabase Storage, for document uploads we can use:
+>    * **Option A:** Direct integration with **Google Drive API** (storing files securely in a shared office Drive, which fits our plan's USP).
+>    * **Option B:** Local file storage on the server (simplest for MVP, but less scalable).
+>    * **Option C:** Standard Object Storage (e.g., Cloudflare R2 / AWS S3 / MinIO).
+>    * Which option do you prefer?
+> 4. **PostgreSQL Connection Details:** Should we configure the project with local/placeholder environment variables first (e.g., `postgresql://localhost:5432/...`), or do you have an active PostgreSQL connection string ready to use?
 
 ## Proposed Changes
 
@@ -22,7 +29,7 @@ We will set up the foundational project files in the workspace directory: `c:\Us
 ### Project Scaffolding
 
 #### [NEW] [package.json](file:///c:/Users/Han/Desktop/project%20notaris/package.json)
-- Main project manifest containing dependencies: `next`, `react`, `react-dom`, `typescript`, `@types/react`, etc.
+- Main project manifest containing dependencies: `next`, `react`, `react-dom`, `typescript`, `@types/react`, `next-auth`, `@prisma/client`, `bcryptjs` (for hashing passwords), etc.
 
 #### [NEW] [tsconfig.json](file:///c:/Users/Han/Desktop/project%20notaris/tsconfig.json)
 - TypeScript configuration tailored for Next.js App Router and import aliases (`@/*`).
@@ -41,10 +48,10 @@ We will set up the foundational project files in the workspace directory: `c:\Us
 ### Database Setup
 
 #### [NEW] [prisma/schema.prisma](file:///c:/Users/Han/Desktop/project%20notaris/prisma/schema.prisma)
-- Prisma schema file mapping the relational database structure (Users, Roles, Clients, Jobs, Invoices, Cash Transactions, Audit Logs) outlined in `plan.md`.
+- Prisma schema file mapping the relational database structure (Users, Roles, Clients, Jobs, Invoices, Cash Transactions, Audit Logs, plus NextAuth Session and Account tables) directly to your **PostgreSQL database**.
 
 #### [NEW] [.env.example](file:///c:/Users/Han/Desktop/project%20notaris/.env.example)
-- Example environment template listing required variables (`DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, etc.).
+- Example environment template listing required variables (`DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, etc.).
 
 ---
 
